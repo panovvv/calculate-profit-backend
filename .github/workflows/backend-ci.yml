@@ -1,0 +1,95 @@
+name: Backend CI
+
+# CI/CD-ready pipeline for the Spring Boot backend: it enforces code style (Spotless), compiles,
+# runs the full test suite (unit, web, persistence integration, ArchUnit), and produces a JaCoCo
+# coverage report — all reproducible locally with `mvn verify`.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Java, check formatting, run tests and code coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Temurin) with Maven cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # `mvn verify` runs, in order: spotless:check -> compile -> all tests
+      # (incl. ArchUnit hexagonal rules + the H2/Flyway persistence integration test)
+      # -> jacoco:report. Any style drift or failing test fails the build.
+      - name: Verify (Spotless + tests + JaCoCo)
+        run: mvn -B --no-transfer-progress verify
+
+      # Render a coverage table on the workflow run page (job summary).
+      - name: Coverage summary
+        if: always()
+        run: |
+          csv=target/site/jacoco/jacoco.csv
+          if [ ! -f "$csv" ]; then echo "No coverage report generated." >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          awk -F, 'NR>1 {im+=$4; ic+=$5; bm+=$6; bc+=$7; lm+=$8; lc+=$9}
+            END {
+              print "## Coverage";
+              print "";
+              print "| Metric | Covered | Total | % |";
+              print "|---|---:|---:|---:|";
+              printf "| Lines | %d | %d | %.1f%% |\n", lc, lc+lm, 100*lc/(lc+lm);
+              printf "| Branches | %d | %d | %.1f%% |\n", bc, bc+bm, (bc+bm>0)?100*bc/(bc+bm):100;
+              printf "| Instructions | %d | %d | %.1f%% |\n", ic, ic+im, 100*ic/(ic+im);
+            }' "$csv" >> "$GITHUB_STEP_SUMMARY"
+
+      # External dashboard + README badge. Codecov requires a token even for public repos;
+      # add CODECOV_TOKEN as a repository secret (see README / Codecov setup).
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+      - name: Upload JaCoCo coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          if-no-files-found: warn
+
+  docker-image:
+    name: Build & push Docker image
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: calculate-profit-backend
+      TAG: ${{ github.sha }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/Dockerfile
+          push: false
+          load: true
+          tags: ${{ env.IMAGE }}:${{ env.TAG }},${{ env.IMAGE }}:latest
+
+      # Pushing is intentionally a no-op for now.
+      - name: Push image (no-op placeholder)
+        run: echo "Skipping push of ${IMAGE}:${TAG} — no registry configured yet."

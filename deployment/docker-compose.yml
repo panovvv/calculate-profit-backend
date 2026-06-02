@@ -1,0 +1,15 @@
+# Builds and runs the backend from the local Dockerfile. From the repo root:
+#   docker compose -f deployment/docker-compose.yml up --build
+# App: http://localhost:8080 (Swagger UI at /swagger-ui.html). Credentials: dachser / dachser.
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: calculate-profit-backend:local
+    container_name: calculate-profit-backend
+    ports:
+      - "8080:8080"
+    environment:
+      API_USER: dachser
+      API_PASSWORD: dachser

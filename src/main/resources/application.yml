@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: calculate-profit-backend
+
+  # HTTP Basic credentials (dev defaults; override via API_USER / API_PASSWORD env vars).
+  security:
+    user:
+      name: ${API_USER:dachser}
+      password: ${API_PASSWORD:dachser}
+      roles: USER
+
+  # In-memory H2 so the project runs with zero external setup.
+  datasource:
+    url: jdbc:h2:mem:profitdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  jpa:
+    # Validate entity mappings against the Flyway-created schema (never auto-generate it).
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # H2 web console at http://localhost:8080/h2-console (handy for the demo/interview).
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# Observability: expose health, info, metrics and the Prometheus scrape endpoint.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    com.dachser.profit: INFO
+
