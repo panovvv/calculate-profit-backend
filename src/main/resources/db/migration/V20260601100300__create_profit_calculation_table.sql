@@ -5,7 +5,7 @@ CREATE TABLE profit_calculation (
     total_income   DECIMAL(12,2) NOT NULL,
     total_cost     DECIMAL(12,2) NOT NULL,
     profit_or_loss DECIMAL(12,2) NOT NULL,
-    calculated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    calculated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_profit_shipment FOREIGN KEY (shipment_id) REFERENCES shipment (id) ON DELETE CASCADE
 );
 CREATE INDEX idx_profit_shipment ON profit_calculation (shipment_id);

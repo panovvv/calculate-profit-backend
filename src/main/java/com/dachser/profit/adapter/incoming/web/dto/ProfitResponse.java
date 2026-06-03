@@ -1,7 +1,7 @@
 package com.dachser.profit.adapter.incoming.web.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 
 /**
  * Response body for a profit calculation. The {@code income}, {@code totalCosts} and {@code
@@ -22,4 +22,4 @@ public record ProfitResponse(
     BigDecimal totalCosts,
     BigDecimal profitOrLoss,
     boolean profit,
-    Instant calculatedAt) {}
+    OffsetDateTime calculatedAt) {}
