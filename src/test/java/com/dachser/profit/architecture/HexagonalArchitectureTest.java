@@ -10,7 +10,7 @@ import com.tngtech.archunit.lang.ArchRule;
 /**
  * Enforces the hexagonal (ports &amp; adapters) boundaries at build time, so the architecture
  * cannot silently erode: dependencies only ever point inward (adapters -> application -> domain),
- * the domain stays framework-free, and the inbound/outbound adapters never call each other
+ * the domain stays framework-free, and the incoming/outgoing adapters never call each other
  * directly.
  */
 @AnalyzeClasses(
@@ -20,8 +20,8 @@ class HexagonalArchitectureTest {
 
   private static final String DOMAIN = "com.dachser.profit.domain..";
   private static final String APPLICATION = "com.dachser.profit.application..";
-  private static final String INBOUND = "com.dachser.profit.adapter.incoming..";
-  private static final String OUTBOUND = "com.dachser.profit.adapter.outgoing..";
+  private static final String INCOMING = "com.dachser.profit.adapter.incoming..";
+  private static final String OUTGOING = "com.dachser.profit.adapter.outgoing..";
 
   private static final String SPRING = "org.springframework..";
   private static final String JPA = "jakarta.persistence..";
@@ -54,7 +54,7 @@ class HexagonalArchitectureTest {
           .resideInAPackage(DOMAIN)
           .should()
           .dependOnClassesThat()
-          .resideInAnyPackage(INBOUND, OUTBOUND);
+          .resideInAnyPackage(INCOMING, OUTGOING);
 
   // --- Application depends only on the domain (and its own ports), never on adapters ----------
 
@@ -65,7 +65,7 @@ class HexagonalArchitectureTest {
           .resideInAPackage(APPLICATION)
           .should()
           .dependOnClassesThat()
-          .resideInAnyPackage(INBOUND, OUTBOUND);
+          .resideInAnyPackage(INCOMING, OUTGOING);
 
   @ArchTest
   static final ArchRule application_does_not_depend_on_jpa =
@@ -75,27 +75,27 @@ class HexagonalArchitectureTest {
           .should()
           .dependOnClassesThat()
           .resideInAPackage(JPA)
-          .because("persistence details belong to the outbound adapter, not the application core");
+          .because("persistence details belong to the outgoing adapter, not the application core");
 
   // --- Adapters must not short-circuit the core by calling each other -------------------------
 
   @ArchTest
-  static final ArchRule inbound_does_not_depend_on_outbound =
+  static final ArchRule incoming_does_not_depend_on_outgoing =
       noClasses()
           .that()
-          .resideInAPackage(INBOUND)
+          .resideInAPackage(INCOMING)
           .should()
           .dependOnClassesThat()
-          .resideInAPackage(OUTBOUND)
+          .resideInAPackage(OUTGOING)
           .because(
-              "inbound adapters must go through the application core, not the outbound adapter");
+              "incoming adapters must go through the application core, not the outgoing adapter");
 
   @ArchTest
-  static final ArchRule outbound_does_not_depend_on_inbound =
+  static final ArchRule outgoing_does_not_depend_on_incoming =
       noClasses()
           .that()
-          .resideInAPackage(OUTBOUND)
+          .resideInAPackage(OUTGOING)
           .should()
           .dependOnClassesThat()
-          .resideInAPackage(INBOUND);
+          .resideInAPackage(INCOMING);
 }

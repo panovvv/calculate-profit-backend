@@ -4,7 +4,7 @@ import com.dachser.profit.domain.model.ProfitCalculation;
 import java.util.List;
 
 /**
- * Inbound port (driving side) for reading previously calculated profit/loss results, used to
+ * Incoming port (driving side) for reading previously calculated profit/loss results, used to
  * populate the results grid in the UI.
  */
 public interface GetProfitHistoryQuery {

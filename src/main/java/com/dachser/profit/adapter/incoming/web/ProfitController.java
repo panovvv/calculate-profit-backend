@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The single inbound REST adapter for the profit use case (the brief asks for one controller).
+ * The single incoming REST adapter for the profit use case (the brief asks for one controller).
  *
  * <ul>
  *   <li>{@code POST /api/profit/calculations} — calculate and store the profit/loss for a shipment.
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  *       optionally filtered by shipment reference.
  * </ul>
  *
- * The controller depends only on the inbound ports and the web mapper; all business logic lives in
+ * The controller depends only on the incoming ports and the web mapper; all business logic lives in
  * the application core.
  */
 @RestController

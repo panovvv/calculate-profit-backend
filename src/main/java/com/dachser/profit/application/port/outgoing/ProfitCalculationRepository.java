@@ -4,7 +4,7 @@ import com.dachser.profit.domain.model.ProfitCalculation;
 import com.dachser.profit.domain.model.ProfitResult;
 import java.util.List;
 
-/** Outbound port (driven side) for storing and retrieving profit calculations. */
+/** Outgoing port (driven side) for storing and retrieving profit calculations. */
 public interface ProfitCalculationRepository {
 
   /**

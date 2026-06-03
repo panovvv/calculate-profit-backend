@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Allows the Angular dev server (default {@code http://localhost:4200}) to call the API during
- * local development. Part of the inbound web adapter.
+ * local development. Part of the incoming web adapter.
  */
 @Configuration
 class WebCorsConfig implements WebMvcConfigurer {

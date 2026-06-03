@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Outbound persistence adapter implementing {@link ShipmentRepository} on top of Spring Data JPA.
+ * Outgoing persistence adapter implementing {@link ShipmentRepository} on top of Spring Data JPA.
  * Translates between the pure domain {@link Shipment} aggregate and the JPA entities, keeping the
  * mapping (and all JPA types) confined to this adapter.
  *

@@ -40,15 +40,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
-        <!-- Observability: Actuator endpoints + Micrometer, with a Prometheus scrape endpoint.
-             AOP backs the per-endpoint request metrics aspect. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- AspectJ annotations for the metrics aspect; Spring Boot enables AOP auto-proxying
-             once aspectjweaver is on the classpath. (Boot 4.0 has no spring-boot-starter-aop.) -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
@@ -59,49 +54,39 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- In-memory database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- H2 web console (dev tool). In Spring Boot 4.0 the console auto-configuration lives in this
-             dedicated module, so `spring.h2.console.enabled` alone is not enough without it. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-h2console</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- Versioned schema migrations (one per table). Spring Boot 4.0 ships Flyway
-             auto-configuration in this dedicated module, which pulls in flyway-core transitively. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-flyway</artifactId>
         </dependency>
 
-        <!-- Mapper layer (DTO <-> domain <-> JPA) -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <!-- OpenAPI 3 spec + Swagger UI, generated from the code (springdoc 3.x targets Spring Boot 4). -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>3.0.3</version>
         </dependency>
 
-        <!-- Lombok: @RequiredArgsConstructor for constructor injection, @Slf4j for loggers.
-             Compile-time only (optional) so it never leaks onto the runtime classpath. -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -113,6 +98,12 @@
             <version>1.4.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>6.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -122,8 +113,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <annotationProcessorPaths>
-                        <!-- Order matters: Lombok runs first, then the binding lets MapStruct see
-                             Lombok-generated accessors, then MapStruct. -->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
@@ -148,7 +137,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Coverage report (optional deliverable) -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -167,7 +155,6 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!-- Fail the build (and CI) if line coverage drops below 80%. -->
                     <execution>
                         <id>check</id>
                         <goals>
@@ -191,8 +178,6 @@
                 </executions>
             </plugin>
 
-            <!-- Enforces a consistent code style (Google Java Format + import ordering).
-                 Local:  mvn spotless:apply   CI: bound to `verify` as spotless:check (fails on drift). -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>

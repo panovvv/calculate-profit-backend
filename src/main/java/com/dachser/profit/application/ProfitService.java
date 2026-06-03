@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Application service orchestrating the "Calculate Profit" use case. It is the single
- * implementation of the inbound ports and depends only on outbound ports and the pure domain —
+ * implementation of the incoming ports and depends only on outgoing ports and the pure domain —
  * never on adapters.
  *
  * <p>Flow (mirrors the use-case main flow): build the entered incomes/costs into a {@link

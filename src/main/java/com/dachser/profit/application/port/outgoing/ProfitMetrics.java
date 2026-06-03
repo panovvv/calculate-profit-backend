@@ -1,8 +1,8 @@
 package com.dachser.profit.application.port.outgoing;
 
 /**
- * Outbound port for recording application metrics, keeping the metrics backend (Micrometer) out of
- * the core. Implemented by an outbound adapter; called from the web adapter's metrics aspect.
+ * Outgoing port for recording application metrics, keeping the metrics backend (Micrometer) out of
+ * the core. Implemented by an outgoing adapter; called from the web adapter's metrics aspect.
  */
 public interface ProfitMetrics {
 

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Outbound adapter implementing {@link ProfitMetrics} with Micrometer. Emits a {@code
+ * Outgoing adapter implementing {@link ProfitMetrics} with Micrometer. Emits a {@code
  * profit.requests} counter tagged by endpoint and outcome, which Actuator exposes (e.g. at {@code
  * /actuator/prometheus}).
  */

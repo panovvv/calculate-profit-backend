@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JPA mapping for the {@code shipment} table. Lives in the outbound persistence adapter so the
+ * JPA mapping for the {@code shipment} table. Lives in the outgoing persistence adapter so the
  * domain model stays free of persistence concerns. Owns its incomes and costs via cascade + orphan
  * removal.
  */

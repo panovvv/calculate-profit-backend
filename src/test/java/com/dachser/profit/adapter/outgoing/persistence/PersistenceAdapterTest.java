@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * Integration test for the outbound persistence adapters against real H2. Booting the full context
+ * Integration test for the outgoing persistence adapters against real H2. Booting the full context
  * also verifies that the Flyway migrations apply and that the JPA mappings pass Hibernate's {@code
  * ddl-auto=validate} check against the Flyway-created schema.
  *

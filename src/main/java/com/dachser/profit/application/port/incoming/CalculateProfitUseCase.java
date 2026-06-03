@@ -4,10 +4,10 @@ import com.dachser.profit.application.command.CalculateProfitCommand;
 import com.dachser.profit.domain.model.ProfitCalculation;
 
 /**
- * Inbound port (driving side) for the "Calculate Profit" use case.
+ * Incoming port (driving side) for the "Calculate Profit" use case.
  *
  * <p>Records the entered income and costs against the shipment, computes the profit or loss, stores
- * the result and returns it. Inbound adapters (e.g. the REST controller) depend on this interface
+ * the result and returns it. Incoming adapters (e.g. the REST controller) depend on this interface
  * rather than on the concrete service.
  */
 public interface CalculateProfitUseCase {

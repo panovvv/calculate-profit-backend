@@ -4,7 +4,7 @@ import com.dachser.profit.domain.model.Shipment;
 import java.util.Optional;
 
 /**
- * Outbound port (driven side) for persisting and loading shipments together with their incomes and
+ * Outgoing port (driven side) for persisting and loading shipments together with their incomes and
  * costs. Implemented by a persistence adapter; the application core depends only on this interface
  * (dependency inversion).
  */

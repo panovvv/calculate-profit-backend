@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Outbound persistence adapter implementing {@link ProfitCalculationRepository} on top of Spring
+ * Outgoing persistence adapter implementing {@link ProfitCalculationRepository} on top of Spring
  * Data JPA. Links each stored calculation to its shipment by reference and converts the UTC {@link
  * LocalDateTime} column to/from a domain {@link java.time.Instant}.
  *
