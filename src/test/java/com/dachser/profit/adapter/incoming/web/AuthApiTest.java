@@ -34,4 +34,15 @@ class AuthApiTest extends BaseRestApiTest {
     String body = anonymous().get("/v3/api-docs").then().statusCode(200).extract().asString();
     assertThat(body).contains(PROFIT_CALCULATIONS_ENDPOINT);
   }
+
+  @Test
+  void corsPreflightSucceedsForConfiguredOrigin() {
+    anonymous()
+        .header("Origin", "http://localhost:4200")
+        .header("Access-Control-Request-Method", "POST")
+        .options(PROFIT_CALCULATIONS_ENDPOINT)
+        .then()
+        .statusCode(200)
+        .header("Access-Control-Allow-Origin", "http://localhost:4200");
+  }
 }
