@@ -1,10 +1,12 @@
 package com.dachser.profit.adapter.incoming.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 import com.dachser.profit.testsupport.ProfitTestData;
 import io.restassured.response.Response;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -51,16 +53,33 @@ class ProfitApiTest extends BaseRestApiTest {
   }
 
   @Test
-  void listFiltersByShipmentReference() {
+  void listReturnsAPageFilteredByShipmentReference() {
     String reference = ProfitTestData.uniqueReference();
     calculate(reference, 300, 100, 0).then().statusCode(201);
 
     Response list = authenticated().get("/api/profit/calculations?shipment=" + reference);
 
-    list.then().statusCode(200);
-    List<String> references = list.jsonPath().getList("shipmentReference");
-    assertThat(references).containsExactly(reference);
-    assertThat(list.jsonPath().getList("profitOrLoss", Double.class)).containsExactly(200.0);
+    list.then().statusCode(200).body("page.totalElements", equalTo(1));
+    assertThat(list.jsonPath().getList("content.shipmentReference")).containsExactly(reference);
+    assertThat(list.jsonPath().getList("content.profitOrLoss", Double.class))
+        .containsExactly(200.0);
+  }
+
+  @Test
+  void pagesResults() {
+    String reference = ProfitTestData.uniqueReference();
+    calculate(reference, 100, 10, 0).then().statusCode(201);
+    calculate(reference, 200, 20, 0).then().statusCode(201);
+
+    authenticated()
+        .get("/api/profit/calculations?shipment=" + reference + "&page=0&size=1")
+        .then()
+        .statusCode(200)
+        .body("content.size()", equalTo(1))
+        .body("page.size", equalTo(1))
+        .body("page.number", equalTo(0))
+        .body("page.totalElements", equalTo(2))
+        .body("page.totalPages", equalTo(2));
   }
 
   @Test
@@ -71,7 +90,7 @@ class ProfitApiTest extends BaseRestApiTest {
         .post("/api/profit/calculations")
         .then()
         .statusCode(400)
-        .body("detail", org.hamcrest.Matchers.not(org.hamcrest.Matchers.emptyOrNullString()));
+        .body("detail", not(emptyOrNullString()));
   }
 
   @Test

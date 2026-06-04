@@ -16,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * Integration test for the outgoing persistence adapters against real H2. Booting the full context
@@ -94,21 +96,24 @@ class PersistenceAdapterTest {
     assertThat(stored.result().profitOrLoss()).isEqualByComparingTo(result.profitOrLoss());
 
     // Scoped query: returns only this shipment's data, regardless of what other tests stored.
-    assertThat(profitAdapter.findByShipmentReference(shipment.reference()))
+    assertThat(profitAdapter.findByShipmentReference(shipment.reference(), PageRequest.of(0, 10)))
         .singleElement()
         .satisfies(
             c -> assertThat(c.result().profitOrLoss()).isEqualByComparingTo(result.profitOrLoss()));
   }
 
   @Test
-  @DisplayName("findAll contains this test's stored calculation (no reliance on a global count)")
-  void findAllContainsOwnCalculation() {
+  @DisplayName("findAll returns a bounded page with total-count metadata")
+  void findAllReturnsAPage() {
     Shipment shipment = ProfitTestData.randomShipment();
     shipmentAdapter.save(shipment);
     profitAdapter.save(
         shipment.reference(), calculator.calculate(shipment.incomes(), shipment.costs()));
 
-    assertThat(profitAdapter.findAll())
-        .anySatisfy(c -> assertThat(c.shipmentReference()).isEqualTo(shipment.reference()));
+    Page<ProfitCalculation> page = profitAdapter.findAll(PageRequest.of(0, 5));
+
+    assertThat(page.getSize()).isEqualTo(5);
+    assertThat(page.getContent()).hasSizeLessThanOrEqualTo(5);
+    assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(1);
   }
 }

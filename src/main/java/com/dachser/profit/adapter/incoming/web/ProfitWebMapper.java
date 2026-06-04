@@ -2,7 +2,6 @@ package com.dachser.profit.adapter.incoming.web;
 
 import com.dachser.profit.adapter.incoming.web.dto.ProfitResponse;
 import com.dachser.profit.domain.model.ProfitCalculation;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,6 +18,4 @@ public interface ProfitWebMapper {
   @Mapping(target = "profitOrLoss", source = "result.profitOrLoss")
   @Mapping(target = "profit", source = "result.profit")
   ProfitResponse toResponse(ProfitCalculation calculation);
-
-  List<ProfitResponse> toResponses(List<ProfitCalculation> calculations);
 }

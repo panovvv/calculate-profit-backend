@@ -2,7 +2,8 @@ package com.dachser.profit.application.port.outgoing;
 
 import com.dachser.profit.domain.model.ProfitCalculation;
 import com.dachser.profit.domain.model.ProfitResult;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /** Outgoing port (driven side) for storing and retrieving profit calculations. */
 public interface ProfitCalculationRepository {
@@ -17,9 +18,9 @@ public interface ProfitCalculationRepository {
    */
   ProfitCalculation save(String shipmentReference, ProfitResult result);
 
-  /** All stored calculations, most recent first. */
-  List<ProfitCalculation> findAll();
+  /** A page of stored calculations. */
+  Page<ProfitCalculation> findAll(Pageable pageable);
 
-  /** Stored calculations for one shipment reference, most recent first. */
-  List<ProfitCalculation> findByShipmentReference(String shipmentReference);
+  /** A page of stored calculations for one shipment reference. */
+  Page<ProfitCalculation> findByShipmentReference(String shipmentReference, Pageable pageable);
 }

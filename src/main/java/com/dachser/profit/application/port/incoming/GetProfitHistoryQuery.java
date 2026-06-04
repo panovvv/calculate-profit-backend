@@ -1,17 +1,18 @@
 package com.dachser.profit.application.port.incoming;
 
 import com.dachser.profit.domain.model.ProfitCalculation;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Incoming port (driving side) for reading previously calculated profit/loss results, used to
- * populate the results grid in the UI.
+ * populate the (paged) results grid in the UI.
  */
 public interface GetProfitHistoryQuery {
 
-  /** All stored calculations, most recent first. */
-  List<ProfitCalculation> history();
+  /** A page of stored calculations. */
+  Page<ProfitCalculation> history(Pageable pageable);
 
-  /** Stored calculations for a single shipment reference, most recent first. */
-  List<ProfitCalculation> historyFor(String shipmentReference);
+  /** A page of stored calculations for a single shipment reference. */
+  Page<ProfitCalculation> historyFor(String shipmentReference, Pageable pageable);
 }

@@ -8,10 +8,11 @@ import com.dachser.profit.domain.model.CostType;
 import com.dachser.profit.domain.model.ProfitCalculation;
 import com.dachser.profit.testsupport.ProfitTestData;
 import java.math.BigDecimal;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * Context test for the application service against real collaborators (no mocks): the autowired
@@ -74,17 +75,16 @@ class ProfitServiceContextTest {
         new CalculateProfitCommand(
             reference, new BigDecimal("300"), new BigDecimal("100"), BigDecimal.ZERO));
 
-    List<ProfitCalculation> history = service.historyFor(reference);
+    Page<ProfitCalculation> history = service.historyFor(reference, PageRequest.of(0, 10));
 
-    assertThat(history)
+    assertThat(history.getContent())
         .singleElement()
         .satisfies(
             c -> {
               assertThat(c.shipmentReference()).isEqualTo(reference);
               assertThat(c.result().profitOrLoss()).isEqualByComparingTo("200.00");
             });
-    // And the global history contains it too.
-    assertThat(service.history())
-        .anySatisfy(c -> assertThat(c.shipmentReference()).isEqualTo(reference));
+    // The global (paged) history is populated and reports a total count.
+    assertThat(service.history(PageRequest.of(0, 5)).getTotalElements()).isGreaterThanOrEqualTo(1);
   }
 }

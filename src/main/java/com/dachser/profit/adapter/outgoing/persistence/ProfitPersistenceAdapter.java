@@ -5,8 +5,9 @@ import com.dachser.profit.domain.model.ProfitCalculation;
 import com.dachser.profit.domain.model.ProfitResult;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,18 +49,17 @@ class ProfitPersistenceAdapter implements ProfitCalculationRepository {
 
   @Override
   @Transactional(readOnly = true)
-  public List<ProfitCalculation> findAll() {
-    return repository.findAllByOrderByCalculatedAtDesc().stream()
-        .map(ProfitPersistenceAdapter::toDomain)
-        .toList();
+  public Page<ProfitCalculation> findAll(Pageable pageable) {
+    return repository.findAll(pageable).map(ProfitPersistenceAdapter::toDomain);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<ProfitCalculation> findByShipmentReference(String shipmentReference) {
-    return repository.findByShipmentReferenceOrderByCalculatedAtDesc(shipmentReference).stream()
-        .map(ProfitPersistenceAdapter::toDomain)
-        .toList();
+  public Page<ProfitCalculation> findByShipmentReference(
+      String shipmentReference, Pageable pageable) {
+    return repository
+        .findByShipmentReference(shipmentReference, pageable)
+        .map(ProfitPersistenceAdapter::toDomain);
   }
 
   private static ProfitCalculation toDomain(ProfitCalculationJpaEntity entity) {

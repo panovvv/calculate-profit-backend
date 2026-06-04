@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,14 +58,14 @@ public class ProfitService implements CalculateProfitUseCase, GetProfitHistoryQu
 
   @Override
   @Transactional(readOnly = true)
-  public List<ProfitCalculation> history() {
-    return profitCalculationRepository.findAll();
+  public Page<ProfitCalculation> history(Pageable pageable) {
+    return profitCalculationRepository.findAll(pageable);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<ProfitCalculation> historyFor(String shipmentReference) {
-    return profitCalculationRepository.findByShipmentReference(shipmentReference);
+  public Page<ProfitCalculation> historyFor(String shipmentReference, Pageable pageable) {
+    return profitCalculationRepository.findByShipmentReference(shipmentReference, pageable);
   }
 
   private static List<Cost> buildCosts(CalculateProfitCommand command) {
